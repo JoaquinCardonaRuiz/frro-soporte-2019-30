@@ -14,22 +14,30 @@
 #   ]
 # - False en caso de no cumplir con alguna validacion.
 
-import datetime
+import datetime, sqlite3
 
 from practico_03.ejercicio_02 import agregar_persona
 from practico_03.ejercicio_06 import reset_tabla
 from practico_03.ejercicio_07 import agregar_peso
+from practico_03.ejercicio_04 import buscar_persona
 
+connection = sqlite3.connect('test.db')
+cursor = connection.cursor()
 
 def listar_pesos(id_persona):
-    return []
+    if buscar_persona(id_persona) is False:
+        return False
+    else:
+        ssql = "SELECT fecha, peso FROM personaPeso WHERE idPersona=?"
+        cursor.execute(ssql,(id_persona,))
+        return cursor.fetchall()
 
 
 @reset_tabla
 def pruebas():
-    id_juan = agregar_persona('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)
-    agregar_peso(id_juan, datetime.datetime(2018, 5, 1), 80)
-    agregar_peso(id_juan, datetime.datetime(2018, 6, 1), 85)
+    id_juan = agregar_persona('juan perez', datetime.date(1988, 5, 15), 32165498, 180)
+    agregar_peso(id_juan, datetime.date(2018, 5, 1), 80)
+    agregar_peso(id_juan, datetime.date(2018, 6, 1), 85)
     pesos_juan = listar_pesos(id_juan)
     pesos_esperados = [
         ('2018-05-01', 80),
